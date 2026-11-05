@@ -1,1 +1,160 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tantsiri - Owner Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Poppins', sans-serif; }</style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginSection" class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-purple-600">Tantsiri Admin</h1>
+                <p class="text-gray-500 text-sm mt-1">Owner Authentication Required</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Admin Password</label>
+                    <input type="password" id="adminPassword" required placeholder="Enter password" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <p class="text-xs text-gray-400 mt-1">Default Password: <span class="font-semibold text-gray-600">tantsiri2026</span></p>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 text-white py-2.5 rounded-xl font-medium hover:bg-purple-700 transition shadow-lg shadow-purple-100">
+                    Login to Dashboard
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <a href="index.html" class="text-sm text-indigo-600 hover:underline">← Go back to Storefront</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="hidden min-h-screen flex flex-col">
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl font-bold text-purple-600">Tantsiri Admin</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-purple-100 text-purple-700">Owner Portal</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" target="_blank" class="text-sm text-indigo-600 hover:underline font-medium">View Live Store ↗</a>
+                    <button onclick="adminLogout()" class="text-sm text-red-600 hover:text-red-700 font-medium">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Add Product Box -->
+            <div class="mb-12 bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Add New Clothing Item</h2>
+                <form id="addProductForm" onsubmit="addProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <input type="text" id="itemName" placeholder="Item Name (e.g. Silk Saree)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="number" id="itemPrice" placeholder="Price (₹)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="text" id="itemSize" placeholder="Sizes (e.g. S, M, L, Free Size)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="url" id="itemImage" placeholder="Image URL (Unsplash/Imgur link)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <button type="submit" class="bg-purple-600 text-white rounded-xl py-2 font-medium hover:bg-purple-700 transition shadow-md">Add Product</button>
+                </form>
+            </div>
+
+            <!-- Manage Products -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Manage Collection</h2>
+                <div id="adminProductGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = "tantsiri2026"; // Change this password anytime
+        let products = JSON.parse(localStorage.getItem('tantsiri_products')) || [
+            { id: 1, name: "Traditional Silk Saree", price: 2499, size: "Free Size", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600" },
+            { id: 2, name: "Designer Anarkali Kurta", price: 1499, size: "M, L, XL", image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600" }
+        ];
+
+        let isAdminLoggedIn = localStorage.getItem('tantsiri_admin_auth') === 'true';
+        if (isAdminLoggedIn) showAdminDashboard();
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === ADMIN_PASSWORD) {
+                localStorage.setItem('tantsiri_admin_auth', 'true');
+                showAdminDashboard();
+            } else {
+                alert('Incorrect Password!');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('adminLoginSection').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            renderAdminProducts();
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('tantsiri_admin_auth');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('adminLoginSection').classList.remove('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function addProduct(event) {
+            event.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+            const size = document.getElementById('itemSize').value;
+            const image = document.getElementById('itemImage').value;
+
+            const newProduct = { id: Date.now(), name, price: Number(price), size, image };
+            products.push(newProduct);
+            localStorage.setItem('tantsiri_products', JSON.stringify(products));
+            
+            document.getElementById('addProductForm').reset();
+            renderAdminProducts();
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('tantsiri_products', JSON.stringify(products));
+                renderAdminProducts();
+            }
+        }
+
+        function renderAdminProducts() {
+            const grid = document.getElementById('adminProductGrid');
+            grid.innerHTML = '';
+            if (products.length === 0) {
+                grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-8">No products listed yet.</p>`;
+                return;
+            }
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="h-64 overflow-hidden bg-gray-100 relative">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-semibold text-lg text-gray-900">${product.name}</h3>
+                            <p class="text-gray-500 text-sm mt-1">Sizes: <span class="font-medium text-gray-700">${product.size}</span></p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0 flex items-center justify-between mt-4">
+                        <span class="text-xl font-bold text-purple-600">₹${product.price}</span>
+                        <button onclick="deleteProduct(${product.id})" class="bg-red-50 text-red-600 text-sm px-4 py-2 rounded-xl font-medium hover:bg-red-100 transition border border-red-100">Delete Item</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
