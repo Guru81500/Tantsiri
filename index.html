@@ -17,19 +17,38 @@
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
                 <h1 class="text-3xl font-bold text-indigo-600">Tantsiri</h1>
-                <p class="text-gray-500 text-sm mt-1">Sign in with your WhatsApp number to explore</p>
+                <p class="text-gray-500 text-sm mt-1">Welcome to our exclusive collection</p>
             </div>
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+
+            <!-- Login Tabs -->
+            <div class="flex rounded-xl bg-gray-100 p-1 mb-6">
+                <button onclick="switchTab('customer')" id="customerTabBtn" class="flex-1 py-2 text-sm font-medium rounded-lg bg-white text-indigo-600 shadow-sm transition">Customer Login</button>
+                <button onclick="switchTab('admin')" id="adminTabBtn" class="flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 transition">Owner Login</button>
+            </div>
+
+            <!-- Customer WhatsApp Form -->
+            <form id="customerLoginForm" onsubmit="handleCustomerLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">+91</span>
                         <input type="tel" id="whatsappNumber" required placeholder="Enter 10-digit number" pattern="[0-9]{10}" class="flex-1 min-w-0 block w-full px-3 py-2.5 rounded-none rounded-r-xl border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Hint: Enter any 10-digit number. (Use <span class="font-semibold text-gray-600">9999999999</span> to login as Owner)</p>
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
-                    Continue with WhatsApp
+                    Continue as Customer
+                </button>
+            </form>
+
+            <!-- Admin Password Form -->
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Admin Password</label>
+                    <input type="password" id="adminPassword" required placeholder="Enter owner password" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <p class="text-xs text-gray-400 mt-1">Default Password: <span class="font-semibold text-gray-600">tantsiri2026</span></p>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 text-white py-2.5 rounded-xl font-medium hover:bg-purple-700 transition shadow-lg shadow-purple-100">
+                    Login as Owner
                 </button>
             </form>
         </div>
@@ -54,18 +73,18 @@
         <!-- Main Content Area -->
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
-            <!-- OWNER UPLOAD PANEL (Visible only to Owner: 9999999999) -->
-            <div id="ownerPanel" class="hidden mb-12 bg-white p-6 rounded-2xl shadow-sm border border-indigo-100">
+            <!-- ADMIN UPLOAD PANEL (Visible only when logged in as Owner) -->
+            <div id="ownerPanel" class="hidden mb-12 bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
                 <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Add New Clothing Item
+                    <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Manage Store Collection
                 </h2>
                 <form id="addProductForm" onsubmit="addProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <input type="text" id="itemName" placeholder="Item Name (e.g. Silk Saree)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <input type="number" id="itemPrice" placeholder="Price (₹)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <input type="text" id="itemSize" placeholder="Sizes (e.g. S, M, L, Free Size)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <input type="url" id="itemImage" placeholder="Image URL (Unsplash/Imgur link)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <button type="submit" class="bg-indigo-600 text-white rounded-xl py-2 font-medium hover:bg-indigo-700 transition shadow-md">List Product</button>
+                    <input type="text" id="itemName" placeholder="Item Name (e.g. Silk Saree)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="number" id="itemPrice" placeholder="Price (₹)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="text" id="itemSize" placeholder="Sizes (e.g. S, M, L, Free Size)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <input type="url" id="itemImage" placeholder="Image URL (Unsplash/Imgur link)" required class="px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 text-sm">
+                    <button type="submit" class="bg-purple-600 text-white rounded-xl py-2 font-medium hover:bg-purple-700 transition shadow-md">Add Product</button>
                 </form>
             </div>
 
@@ -81,9 +100,8 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Owner WhatsApp Number configuration
-        const OWNER_NUMBER = "9999999999"; 
-        const STORE_OWNER_WHATSAPP = "919999999999"; // Replace with your actual WhatsApp number for receiving orders
+        const STORE_OWNER_WHATSAPP = "919999999999"; // Replace with your WhatsApp number to receive orders
+        const ADMIN_PASSWORD = "tantsiri2026"; // Change this password anytime
 
         // Initial Sample Products
         let products = JSON.parse(localStorage.getItem('tantsiri_products')) || [
@@ -91,46 +109,80 @@
             { id: 2, name: "Designer Anarkali Kurta", price: 1499, size: "M, L, XL", image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600" }
         ];
 
-        let currentUser = localStorage.getItem('tantsiri_user');
+        let session = JSON.parse(localStorage.getItem('tantsiri_session'));
 
-        if (currentUser) {
-            showDashboard(currentUser);
+        if (session) {
+            showDashboard(session.type, session.identifier);
         }
 
-        function handleLogin(event) {
+        function switchTab(type) {
+            const custBtn = document.getElementById('customerTabBtn');
+            const adminBtn = document.getElementById('adminTabBtn');
+            const custForm = document.getElementById('customerLoginForm');
+            const adminForm = document.getElementById('adminLoginForm');
+
+            if (type === 'customer') {
+                custBtn.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white text-indigo-600 shadow-sm transition";
+                adminBtn.className = "flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 transition";
+                custForm.classList.remove('hidden');
+                adminForm.classList.add('hidden');
+            } else {
+                adminBtn.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white text-purple-600 shadow-sm transition";
+                custBtn.className = "flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 transition";
+                adminForm.classList.remove('hidden');
+                custForm.classList.add('hidden');
+            }
+        }
+
+        function handleCustomerLogin(event) {
             event.preventDefault();
             const phone = document.getElementById('whatsappNumber').value.trim();
-            localStorage.setItem('tantsiri_user', phone);
-            showDashboard(phone);
+            const sessionData = { type: 'customer', identifier: phone };
+            localStorage.setItem('tantsiri_session', JSON.stringify(sessionData));
+            showDashboard('customer', phone);
         }
 
-        function showDashboard(phone) {
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === ADMIN_PASSWORD) {
+                const sessionData = { type: 'admin', identifier: 'Store Owner' };
+                localStorage.setItem('tantsiri_session', JSON.stringify(sessionData));
+                showDashboard('admin', 'Store Owner');
+            } else {
+                alert('Incorrect Admin Password!');
+            }
+        }
+
+        function showDashboard(type, identifier) {
             document.getElementById('loginSection').classList.add('hidden');
             document.getElementById('dashboardSection').classList.remove('hidden');
             
-            document.getElementById('userDisplay').innerText = `+91 ${phone}`;
-            
             const badge = document.getElementById('roleBadge');
             const ownerPanel = document.getElementById('ownerPanel');
+            const userDisplay = document.getElementById('userDisplay');
 
-            if (phone === OWNER_NUMBER) {
-                badge.innerText = "Store Owner";
+            if (type === 'admin') {
+                badge.innerText = "Owner / Admin";
                 badge.className = "text-xs px-2.5 py-1 rounded-full font-medium bg-purple-100 text-purple-700";
                 ownerPanel.classList.remove('hidden');
+                userDisplay.innerText = "Administrator";
             } else {
                 badge.innerText = "Customer";
                 badge.className = "text-xs px-2.5 py-1 rounded-full font-medium bg-green-100 text-green-700";
                 ownerPanel.classList.add('hidden');
+                userDisplay.innerText = `+91 ${identifier}`;
             }
 
-            renderProducts();
+            renderProducts(type);
         }
 
         function logout() {
-            localStorage.removeItem('tantsiri_user');
+            localStorage.removeItem('tantsiri_session');
             document.getElementById('dashboardSection').classList.add('hidden');
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('whatsappNumber').value = '';
+            document.getElementById('adminPassword').value = '';
         }
 
         function addProduct(event) {
@@ -152,10 +204,18 @@
             localStorage.setItem('tantsiri_products', JSON.stringify(products));
             
             document.getElementById('addProductForm').reset();
-            renderProducts();
+            renderProducts('admin');
         }
 
-        function renderProducts() {
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('tantsiri_products', JSON.stringify(products));
+                renderProducts('admin');
+            }
+        }
+
+        function renderProducts(userType) {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
 
@@ -166,25 +226,30 @@
 
             products.forEach(product => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col";
+                card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between";
                 
                 const whatsappMsg = encodeURIComponent(`Hi, I am interested in buying this item from Tantsiri:\n\n*${product.name}*\nPrice: ₹${product.price}\nSize: ${product.size}`);
 
+                let actionButton = '';
+                if (userType === 'admin') {
+                    actionButton = `<button onclick="deleteProduct(${product.id})" class="bg-red-50 text-red-600 text-sm px-4 py-2 rounded-xl font-medium hover:bg-red-100 transition border border-red-100">Delete Item</button>`;
+                } else {
+                    actionButton = `<a href="https://wa.me/${STORE_OWNER_WHATSAPP}?text=${whatsappMsg}" target="_blank" class="bg-green-600 text-white text-sm px-4 py-2 rounded-xl font-medium hover:bg-green-700 transition flex items-center shadow-sm shadow-green-100">Order via WhatsApp</a>`;
+                }
+
                 card.innerHTML = `
-                    <div class="h-64 overflow-hidden bg-gray-100 relative">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
+                    <div>
+                        <div class="h-64 overflow-hidden bg-gray-100 relative">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="p-5">
                             <h3 class="font-semibold text-lg text-gray-900">${product.name}</h3>
                             <p class="text-gray-500 text-sm mt-1">Sizes available: <span class="font-medium text-gray-700">${product.size}</span></p>
                         </div>
-                        <div class="mt-4 flex items-center justify-between">
-                            <span class="text-xl font-bold text-indigo-600">₹${product.price}</span>
-                            <a href="https://wa.me/${STORE_OWNER_WHATSAPP}?text=${whatsappMsg}" target="_blank" class="bg-green-600 text-white text-sm px-4 py-2 rounded-xl font-medium hover:bg-green-700 transition flex items-center shadow-sm shadow-green-100">
-                                Order via WhatsApp
-                            </a>
-                        </div>
+                    </div>
+                    <div class="p-5 pt-0 flex items-center justify-between mt-4">
+                        <span class="text-xl font-bold text-indigo-600">₹${product.price}</span>
+                        ${actionButton}
                     </div>
                 `;
                 grid.appendChild(card);
