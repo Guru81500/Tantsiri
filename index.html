@@ -34,12 +34,12 @@
             <!-- STEP 2: SEND WHATSAPP & ENTER OTP -->
             <div id="otpSection" class="space-y-4 hidden mt-4">
                 <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl text-xs text-indigo-800 mb-2">
-                    Step 1: Click the button below to send your OTP request on WhatsApp.<br>
-                    Step 2: Once the owner replies with your 4-digit code, enter it below:
+                    <strong>Step 1:</strong> Click the WhatsApp button below to request your code.<br>
+                    <strong>Step 2:</strong> When the owner replies with your 4-digit code, enter it below:
                 </div>
                 
                 <a id="whatsappLink" href="#" target="_blank" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-medium hover:bg-green-700 transition shadow-lg shadow-green-100 flex items-center justify-center space-x-2 text-center block">
-                    💬 Send OTP Request on WhatsApp
+                    💬 Send OTP on WhatsApp
                 </a>
 
                 <form onsubmit="verifyOtp(event)" class="space-y-4 mt-4">
@@ -98,7 +98,7 @@
             // Generate a random 4 digit code
             generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
             
-            // Create WhatsApp Link without forcing window.open
+            // Create WhatsApp Link
             const msg = encodeURIComponent(`Hi Tantsiri, please send my login OTP code. My phone number is +91 ${pendingPhone}.\n\n(Verification Code: ${generatedOtp})`);
             const waLink = `https://wa.me/${STORE_OWNER_WHATSAPP}?text=${msg}`;
             
